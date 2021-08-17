@@ -12,10 +12,12 @@
     "@cosmjs/proto-signing": "^0.25.5",
     "@cosmjs/stargate": "^0.25.5",
     "@cosmjs/tendermint-rpc": "^0.25.5",
+    "class-validator": "^0.12.2",
     "dotenv": "^10.0.0",
     "node-fetch": "^2.6.1",
     "pouchdb-adapter-idb": "^7.2.2",
     "pouchdb-adapter-memory": "^7.2.2",
+    "secretjs": "^0.17.0-beta1",
     "xdv-universal-wallet-core": "^0.5.0"
   },
   "devDependencies": {

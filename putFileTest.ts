@@ -7,7 +7,7 @@ import {
   TxResponse,
 } from '@cosmjs/stargate/build/codec/cosmos/base/abci/v1beta1/abci'
 import { hexlify } from 'ethers/lib/utils'
-import { XDVNodeProvider } from '.'
+import { AnconWallet, XDVNodeProvider } from '.'
 import {
   MsgClientImpl,
   MsgCreateFile,
@@ -38,20 +38,17 @@ export class Test {
 		]
 	  }`
 
-    const client = new XDVNodeProvider()
+    const mnemonic =''
+    const client = new AnconWallet()
     await client.createAccount('walletcore', 'abc123456789')
-    const provider = await client.createXDVProvider(
+    const provider = await client.createSecretProvider(
       'walletcore',
       'abc123456789',
+      mnemonic
+
     )
-    const address = 'xdv1j0sdejsgze8wqyygf453nhqv9vjklfpamfw694'
-    const msg = MsgCreateFile.fromPartial({
-      creator: address,
-      contentType: 'application/json',
-      data: Buffer.from(data),
-    })
-
-
+    await client.addMetadataContracts(provider.client, 30290, {})
+    const ancon = client.getContract('metadata');
     const query = `message.action='CreateFile'`
 
     provider.tmclient.subscribeTx(query).addListener({
@@ -70,21 +67,7 @@ export class Test {
       },
     })
 
-    const ss = await provider.stargate.signAndBroadcast(
-      address,
-      [provider.xdvnode.msgCreateFile(msg)],
-      {
-        amount: [
-          {
-            denom: 'token',
-            amount: '4',
-          },
-        ],
-        gas: '200000',
-      },
-    )
-
-    console.log(ss)
+   // const tx =  await ancon.metadata.ad
   }
 }
 

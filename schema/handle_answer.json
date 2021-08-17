@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "HandleAnswer",
+  "description": "Responses from handle function",
+  "anyOf": [
+    {
+      "type": "object",
+      "required": [
+        "add_file"
+      ],
+      "properties": {
+        "add_file": {
+          "type": "object",
+          "required": [
+            "cid"
+          ],
+          "properties": {
+            "cid": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "object",
+      "required": [
+        "add_metadata"
+      ],
+      "properties": {
+        "add_metadata": {
+          "type": "object",
+          "required": [
+            "cid"
+          ],
+          "properties": {
+            "cid": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  ]
+}
