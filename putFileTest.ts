@@ -1,6 +1,6 @@
-import { AnconWallet } from ".";
+import { AnconWallet } from '.'
 
-require("dotenv").config();
+require('dotenv').config()
 
 export class Test {
   static async uploadFile() {
@@ -13,22 +13,22 @@ export class Test {
       signature: 'NiQ236iEKLjkJ7zqU4u1GIqsnV0fj9XU3fp8th8lLqCRstn-UtiL-CZE4-WQBPm_N_brRqyCdTiqRcMp3wAybve8MRFzY1d8DEnD8iyxY_ZJOeLr_d9hSKDqLCX80uuxjPk89MExrK19pC36k44kAO1wIYBwCn8iiiIHtkPrYnebJ1iWS5JTd_ZaHMitZ99QCNpmQG3-1BSNXucERr61Mn9VrLgwpQNlCfC_m_QXCsKYhgTo020fDK0aHuAgmMAGKW-s9F9BA-PGvNike_S3KjKiy0dmcWi-J07N7d5hgYXh8l0RChwz_yLFO8o6k0EgEZbFTZdLqeuYM6VHoGWpDQ'
       }
     ]
-    }`;
+    }`
 
-    const mnemonic = process.env.SCRT;
-    
-    const client = new AnconWallet();
+    const mnemonic = process.env.SCRT
+
+    const client = new AnconWallet()
     const provider = await client.createSecretProvider(
-      "walletcore",
-      "abc123456789",
-      mnemonic
-    );
+      'walletcore',
+      'abc123456789',
+      mnemonic,
+    )
     await client.addMetadataContracts(
       provider.client,
       process.env.CONTRACT_ID,
-      {}
-    );
-    const ancon = client.getContract("metadata");
+      { tag: 'esports' },
+    )
+    const ancon = client.getContract('metadata')
     //   const query = `message.action='CreateFile'`
 
     //   provider.tmclient.subscribeTx(query).addListener({
@@ -51,25 +51,25 @@ export class Test {
     // }
     const tx = await ancon.metadata.add(
       {
-        name: "XDV metadata sample: NFT",
-        description: "testing sample",
+        name: 'XDV metadata sample: NFT',
+        description: 'testing sample',
         image:
-          "https://explore.ipld.io/#/explore/QmSnuWmxptJZdLJpKRarxBMS2Ju2oANVrgbr2xWbie9b2D",
-        sources: ["QmSnuWmxptJZdLJpKRarxBMS2Ju2oANVrgbr2xWbie9b2D"],
-        parent: "QmSnuWmxptJZdLJpKRarxBMS2Ju2oANVrgbr2xWbie9b2D",
+          'https://explore.ipld.io/#/explore/QmSnuWmxptJZdLJpKRarxBMS2Ju2oANVrgbr2xWbie9b2D',
+        sources: ['QmSnuWmxptJZdLJpKRarxBMS2Ju2oANVrgbr2xWbie9b2D'],
+        parent: 'QmSnuWmxptJZdLJpKRarxBMS2Ju2oANVrgbr2xWbie9b2D',
         refs: [
-          "QmSnuWmxptJZdLJpKRarxBMS2Ju2oANVrgbr2xWbie9b2D",
-          "QmSnuWmxptJZdLJpKRarxBMS2Ju2oANVrgbr2xWbie9b2D",
+          'QmSnuWmxptJZdLJpKRarxBMS2Ju2oANVrgbr2xWbie9b2D',
+          'QmSnuWmxptJZdLJpKRarxBMS2Ju2oANVrgbr2xWbie9b2D',
         ],
       },
       null,
       null,
-      null
-    );
-    console.log("Transaction", tx);
+      null,
+    )
+    console.log('Transaction', tx)
   }
 }
 
-(async function bootstrap() {
-  await Test.uploadFile();
-})();
+;(async function bootstrap() {
+  await Test.uploadFile()
+})()

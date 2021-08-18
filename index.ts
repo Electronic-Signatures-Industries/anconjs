@@ -127,13 +127,13 @@ export class AnconWallet {
     codeId: any,
     initMsg: any
   ) {
-    // const contractCodeHash = await client.restClient.getCodeHashByCodeId(
-    //   codeId
-    // );
-    const contractCodeHash =
-      "63a3329123dfb082cc6b2f839ccfcc18742640d1e9f0c0e4771a3ab6c68231d4";
-    console.log(`Contract hash: ${contractCodeHash}`);
-    const contract = await client.instantiate(codeId , null, "metadata");
+    // // const contractCodeHash = await client.restClient.getCodeHashByCodeId(
+    // //   codeId
+    // // );
+    // const contractCodeHash =
+    //   "63a3329123dfb082cc6b2f839ccfcc18742640d1e9f0c0e4771a3ab6c68231d4";
+    // console.log(`Contract hash: ${contractCodeHash}`);
+    const contract = await client.instantiate(codeId , initMsg, "metadata","", [...customFees.init.amount]);
     console.log("contract: ", contract);
     const execute = async <T>(msg: T, memo: any, amount: any, fee: any) =>
       client.execute(contract.contractAddress, msg as any, memo, amount, fee);
