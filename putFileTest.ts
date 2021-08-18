@@ -51,16 +51,9 @@ export class Test {
     // }
     const tx = await ancon.metadata.add(
       {
-        name: 'XDV metadata sample: NFT',
-        description: 'testing sample',
-        image:
-          'https://explore.ipld.io/#/explore/QmSnuWmxptJZdLJpKRarxBMS2Ju2oANVrgbr2xWbie9b2D',
-        sources: ['QmSnuWmxptJZdLJpKRarxBMS2Ju2oANVrgbr2xWbie9b2D'],
-        parent: 'QmSnuWmxptJZdLJpKRarxBMS2Ju2oANVrgbr2xWbie9b2D',
-        refs: [
-          'QmSnuWmxptJZdLJpKRarxBMS2Ju2oANVrgbr2xWbie9b2D',
-          'QmSnuWmxptJZdLJpKRarxBMS2Ju2oANVrgbr2xWbie9b2D',
-        ],
+        cid: 'QmSnuWmxptJZdLJpKRarxBMS2Ju2oANVrgbr2xWbie9b2D',
+        data: Buffer.from('secret hello'),
+        path: '/'
       },
       null,
       null,
