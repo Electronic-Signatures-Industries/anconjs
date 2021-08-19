@@ -52,10 +52,10 @@ export class Test {
     const tx = await ancon.metadata.add(
       {
         cid: 'QmSnuWmxptJZdLJpKRarxBMS2Ju2oANVrgbr2xWbie9b2D',
-        data: Buffer.from('secret hello'),
+        data: Buffer.from('secret hello').toString('base64'),
         path: '/'
       },
-      null,
+'',
       null,
       null,
     )
