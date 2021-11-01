@@ -1,24 +1,28 @@
-require('dotenv').config()
-import { ics23 } from '@confio/ics23'
-import { ethers, UnsignedTransaction } from 'ethers'
-import { TxEvent } from '@cosmjs/tendermint-rpc/build/tendermint34'
+require("dotenv").config();
+import { ics23 } from "@confio/ics23";
+import { ethers, UnsignedTransaction } from "ethers";
+import { TxEvent } from "@cosmjs/tendermint-rpc/build/tendermint34";
 
-import { AnconClient } from '.'
+import { AnconClient } from ".";
 import {
   MsgMetadata,
   MsgMetadataResponse,
   MsgUpdateMetadataOwnership,
-} from './store/generated/Electronic-Signatures-Industries/ancon-protocol/ElectronicSignaturesIndustries.anconprotocol.anconprotocol/module/types/anconprotocol/tx'
-import Web3 from 'web3'
+} from "./store/generated/Electronic-Signatures-Industries/ancon-protocol/ElectronicSignaturesIndustries.anconprotocol.anconprotocol/module/types/anconprotocol/tx";
+import Web3 from "web3";
 
-import { MsgSendMetadataOwnership,
-  MsgSendMetadataOwnershipResponse} from './store/generated/Electronic-Signatures-Industries/ancon-protocol/ElectronicSignaturesIndustries.anconprotocol.aguaclara/module/types/aguaclara/tx'
+import {
+  MsgSendMetadataOwnership,
+  MsgSendMetadataOwnershipResponse,
+} from "./store/generated/Electronic-Signatures-Industries/ancon-protocol/ElectronicSignaturesIndustries.anconprotocol.aguaclara/module/types/aguaclara/tx";
 
-import {txClient, registry} from  './store/generated/Electronic-Signatures-Industries/ancon-protocol/ElectronicSignaturesIndustries.anconprotocol.aguaclara/module/index'
+import {
+  txClient,
+  registry,
+} from "./store/generated/Electronic-Signatures-Industries/ancon-protocol/ElectronicSignaturesIndustries.anconprotocol.aguaclara/module/index";
 
-global['fetch'] = require('node-fetch')
+global["fetch"] = require("node-fetch");
 export class Sample {
-
   static async addFile() {
     // Creates a new Ancon client instance
     // isWeb = rxdb for web or node
@@ -26,113 +30,113 @@ export class Sample {
     // rpc url
     const client = new AnconClient(
       false,
-      'http://localhost:1317',
-      'ws://localhost:26657',
-      'http://localhost:8545',
-      '',
+      "http://localhost:1317",
+      "ws://localhost:26657",
+      "http://localhost:8545",
+      ""
       // If Kelpr Wallet, add signer here
-    )
+    );
 
     // User creates new wallet / optional
     const ancon = await client.create(
-      'walletcore',
-      'abc123456789',
+      "walletcore",
+      "abc123456789",
       registry,
-      'lend lock kit kiss walnut flower expect text upset nut arrive hub waste stairs climb neither must crowd harvest network wife lizard shiver obtain',
-    )
+      "lend lock kit kiss walnut flower expect text upset nut arrive hub waste stairs climb neither must crowd harvest network wife lizard shiver obtain"
+    );
     let aguaclaraTxClient = await txClient(ancon.signer, {
-      addr: ancon.rpcUrl
-    })
+      addr: ancon.rpcUrl,
+    });
 
-    const address = 'ethm1x73r96c85nage2y05cpqlzth8ak2qg9p0vqc4d'
-    let cid
+    const address = "ethm1x73r96c85nage2y05cpqlzth8ak2qg9p0vqc4d";
+    let cid;
 
     let msg = MsgMetadata.fromPartial({
       creator: address,
-      name: 'tendermint',
-      image: 'http://localhost:1317',
+      name: "tendermint",
+      image: "http://localhost:1317",
       additionalSources: [
-        'bafyreia66w67tvsr5yiqagmxnklg3xdlxwroj2ho5sdzj45iydatgbbxci',
+        "bafyreia66w67tvsr5yiqagmxnklg3xdlxwroj2ho5sdzj45iydatgbbxci",
       ],
-      links: ['bafyreia66w67tvsr5yiqagmxnklg3xdlxwroj2ho5sdzj45iydatgbbxci'],
-      owner: 'did:key:z8mWaJHXieAVxxLagBpdaNWFEBKVWmMiE',
-      description: 'tendermint',
-      did: '',
-      from: '',
-    })
+      links: ["bafyreia66w67tvsr5yiqagmxnklg3xdlxwroj2ho5sdzj45iydatgbbxci"],
+      owner: "did:key:z8mWaJHXieAVxxLagBpdaNWFEBKVWmMiE",
+      description: "tendermint",
+      did: "",
+      from: "",
+    });
 
     let msgSendMeta = MsgSendMetadataOwnership.fromPartial({
-      creator: 'ethm1x73r96c85nage2y05cpqlzth8ak2qg9p0vqc4d',
-      portId: 'aguaclara',
-      channelId: 'channel-0',
+      creator: "ethm1x73r96c85nage2y05cpqlzth8ak2qg9p0vqc4d",
+      portId: "aguaclara",
+      channelId: "channel-0",
       data: {
-        creator: 'ethm1x73r96c85nage2y05cpqlzth8ak2qg9p0vqc4d',
-        tokenAddress: '0xFA24605D4023b0bf847034Da72D25e1b8daC0E34',
-        tokenId: '3',
-        didRecipient: 'ethm1x73r96c85nage2y05cpqlzth8ak2qg9p0vqc4d',
-        toMetadata: 'ethm1x73r96c85nage2y05cpqlzth8ak2qg9p0vqc4d',
+        creator: "ethm1x73r96c85nage2y05cpqlzth8ak2qg9p0vqc4d",
+        tokenAddress: "0xFA24605D4023b0bf847034Da72D25e1b8daC0E34",
+        tokenId: "3",
+        didRecipient: "ethm1x73r96c85nage2y05cpqlzth8ak2qg9p0vqc4d",
+        toMetadata: "ethm1x73r96c85nage2y05cpqlzth8ak2qg9p0vqc4d",
       },
-    })
+    });
 
     // // Subscribe to Tendermint events
-    let query = `message.action='SendMetadataOwnership'`
+    let query = `message.action='SendMetadataOwnership'`;
     ancon.tm.subscribeTx(query).addListener({
       next: async (log: TxEvent) => {
-        console.log(log)
+        console.log(log);
       },
-    })
+    });
 
-    query = `message.action='UpdateMetadataOwnership'`
+    query = `message.action='UpdateMetadataOwnership'`;
     ancon.tm.subscribeTx(query).addListener({
       next: async (log: TxEvent) => {
         // Decode response
-        const res = MsgUpdateMetadataOwnership.decode(log.result.data)
-        console.log(res)
+        const res = MsgUpdateMetadataOwnership.decode(log.result.data);
+        console.log(res);
         // Hack: Protobuf issue
-        cid = res.hash.split(';')[1]
-        console.log(cid)
+        cid = res.hash.split(";")[1];
+        console.log(cid);
 
         // Get CID content from GET /ancon/{cid} or /ancon/{cid}/{path}
-        const content = await ancon.queryClient.queryReadWithPath(cid, '/', {})
+        const content = await ancon.queryClient.queryReadWithPath(cid, "/", {});
 
-        console.log(content.data)
+        console.log(content.data);
 
-        let key = cid
-        const path = ''
+        let key = cid;
+        const path = "";
         const requestProof = await fetch(
-          `http://localhost:1317/ancon/proof/${key}${path}`,
-        )
-        const proof = await requestProof.json()
+          `http://localhost:1317/ancon/proof/${key}${path}`
+        );
+        const proof = await requestProof.json();
 
-        const root = proof.root
-        const exp = proof.proof
+        const root = proof.root;
+        const exp = proof.proof;
 
-        console.log(root, exp)
+        console.log(root, exp);
       },
-    })
-    const chainId = 'anconprotocol_9000-1'
-    const evmChainId = 9000
+    });
+    const chainId = "anconprotocol_9000-1";
+    const evmChainId = 9000;
 
     const fee = {
       amount: [
         {
-          denom: 'aphoton',
-          amount: '4',
+          denom: "aphoton",
+          amount: "4",
         },
       ],
-      gas: '200000',
-    }
+      gas: "200000",
+    };
     // Create Metadata Message request
     // Add Cosmos uatom
     const msgMetadataReceipt = await ancon.signAndBroadcast(
       chainId,
       evmChainId,
       fee,
-      '0x37A232EB07A4FA8CA88FA6020F89773F6CA020A1',
-      aguaclaraTxClient.msgSendMetadataOwnership(msgSendMeta),
-    )
+      "0x37A232EB07A4FA8CA88FA6020F89773F6CA020A1",
+      aguaclaraTxClient.msgSendMetadataOwnership(msgSendMeta)
+    );
 
-    console.log(msgMetadataReceipt)
+    console.log(msgMetadataReceipt);
     // ancon.getTxProof(msgMetadataReceipt.txhash)
     // setTimeout(async () => {
     //   let resp = await fetch(
@@ -164,6 +168,6 @@ export class Sample {
   }
 }
 
-;(async function bootstrap() {
-  await Sample.addFile()
-})()
+(async function bootstrap() {
+  await Sample.addFile();
+})();
