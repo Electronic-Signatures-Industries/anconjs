@@ -1,14 +1,14 @@
 import { OfflineSigner, Registry } from '@cosmjs/proto-signing';
+import { SigningStargateClient } from '@cosmjs/stargate';
+import { Tendermint34Client } from '@cosmjs/tendermint-rpc';
 import { ethers } from 'ethers';
 import { Wallet } from 'xdv-universal-wallet-core';
-import { Tendermint34Client } from '@cosmjs/tendermint-rpc';
-import { SigningStargateClient } from '@cosmjs/stargate';
 export declare class AnconClient {
     private apiUrl;
-    private rpcUrl;
+    rpcUrl: string;
     private ethereumUrl;
     private defaultEthAddress;
-    private signer?;
+    signer?: OfflineSigner;
     wallet: Wallet;
     tm: Tendermint34Client;
     msgService: any;
@@ -44,8 +44,8 @@ export declare class AnconClient {
      */
     importWallet(accountName: string, passphrase: string, mnemonic: string): Promise<any>;
     sign(accountNumber: any, address: string, chainId: string, sequence: any, fee: any, encoded: any): Promise<Uint8Array>;
-    signAndBroadcast(chainId: string, evmChainId: number, methodName: string, msg: any, fee: any, defaultAccount: string): Promise<any>;
-    create(accountName: string, passphrase: string, mnemonic?: string): Promise<this>;
+    signAndBroadcast(chainId: string, evmChainId: number, fee: any, defaultAccount: string, encoded: any): Promise<any>;
+    create(accountName: string, passphrase: string, registry: any, mnemonic?: string): Promise<this>;
     /**
      * Add Ancon Metadata
      * @param name Identifies the asset to which this token represents.

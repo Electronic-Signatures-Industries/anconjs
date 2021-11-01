@@ -1,39 +1,24 @@
 import { stringToPath } from '@cosmjs/crypto'
 import {
-  AccountData,
-  decodeTxRaw,
-  DirectSecp256k1HdWallet,
-  encodePubkey,
-  makeAuthInfoBytes,
-  makeSignBytes,
-  makeSignDoc,
-  OfflineSigner,
-  Registry,
+  DirectSecp256k1HdWallet, OfflineSigner,
+  Registry
 } from '@cosmjs/proto-signing'
-import { ethers, UnsignedTransaction } from 'ethers'
-import { KeystoreDbModel, Wallet } from 'xdv-universal-wallet-core'
+import { SigningStargateClient } from '@cosmjs/stargate'
 import { Tendermint34Client } from '@cosmjs/tendermint-rpc'
-import { BroadcastTxResponse, SigningStargateClient } from '@cosmjs/stargate'
-import {
-  MsgClientImpl,
-  MsgFile,
-  MsgFileResponse,
-  MsgMetadata,
-  MsgMetadataResponse,
-} from './store/generated/Electronic-Signatures-Industries/ancon-protocol/ElectronicSignaturesIndustries.anconprotocol.anconprotocol/module/types/anconprotocol/tx'
-import {
-  txClient,
-  queryClient,
-  registry,
-} from './store/generated/Electronic-Signatures-Industries/ancon-protocol/ElectronicSignaturesIndustries.anconprotocol.anconprotocol/module'
-
-import { Subject, Subscription } from 'rxjs'
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx'
-import Web3 from 'web3'
-import { encodeSecp256k1Pubkey, makeStdTx } from '@cosmjs/launchpad'
-import { SignDoc } from 'cosmjs-types/cosmos/tx/v1beta1/tx'
+import { ethers } from 'ethers'
 import fetch from 'node-fetch'
-import { fromBase64 } from '@cosmjs/encoding'
+import { Subject, Subscription } from 'rxjs'
+import { KeystoreDbModel, Wallet } from 'xdv-universal-wallet-core'
+import {
+  queryClient,
+  txClient
+} from './store/generated/Electronic-Signatures-Industries/ancon-protocol/ElectronicSignaturesIndustries.anconprotocol.anconprotocol/module'
+import {
+  MsgFile,
+  MsgFileResponse, MsgMetadataResponse
+} from './store/generated/Electronic-Signatures-Industries/ancon-protocol/ElectronicSignaturesIndustries.anconprotocol.anconprotocol/module/types/anconprotocol/tx'
+
 global['fetch'] = require('node-fetch')
 
 export class AnconClient {
@@ -54,10 +39,10 @@ export class AnconClient {
   constructor(
     isWeb: boolean,
     private apiUrl: string,
-    private rpcUrl: string,
+    public rpcUrl: string,
     private ethereumUrl: string,
     private defaultEthAddress: string,
-    private signer?: OfflineSigner,
+    public signer?: OfflineSigner,
   ) {
     this.wallet = new Wallet({ isWeb })
   }
@@ -147,17 +132,14 @@ export class AnconClient {
   async signAndBroadcast(
     chainId: string,
     evmChainId: number,
-    methodName: string,
-    msg: any,
     fee: any,
     defaultAccount: string,
+    encoded: any,
   ) {
     const accounts = await this.signer.getAccounts()
 
     //const keyringAccount = { ...accounts[defaultAccountIndex] }
     const cosmosAccount = await this.getEthAccountInfo(defaultAccount)
-
-    const encoded = this.msgService[methodName](msg)
 
     // curl -X GET "http://localhost:1317/ethermint/evm/v1/cosmos_account/32A21C1BB6E7C20F547E930B53DAC57F42CD25F6" -H  "accept: application/json"
     const acct = cosmosAccount.account_number
@@ -186,7 +168,7 @@ export class AnconClient {
     return res
   }
 
-  async create(accountName: string, passphrase: string, mnemonic?: string) {
+  async create(accountName: string, passphrase: string, registry: any, mnemonic?: string) {
     let signer = this.signer as DirectSecp256k1HdWallet
     if (!this.signer) {
       const resp = await this.wallet.open(accountName, passphrase)

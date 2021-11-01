@@ -11,8 +11,14 @@ import {
 } from './store/generated/Electronic-Signatures-Industries/ancon-protocol/ElectronicSignaturesIndustries.anconprotocol.anconprotocol/module/types/anconprotocol/tx'
 import Web3 from 'web3'
 
+import { MsgSendMetadataOwnership,
+  MsgSendMetadataOwnershipResponse} from './store/generated/Electronic-Signatures-Industries/ancon-protocol/ElectronicSignaturesIndustries.anconprotocol.aguaclara/module/types/aguaclara/tx'
+
+import {txClient, registry} from  './store/generated/Electronic-Signatures-Industries/ancon-protocol/ElectronicSignaturesIndustries.anconprotocol.aguaclara/module/index'
+
 global['fetch'] = require('node-fetch')
 export class Sample {
+
   static async addFile() {
     // Creates a new Ancon client instance
     // isWeb = rxdb for web or node
@@ -31,8 +37,12 @@ export class Sample {
     const ancon = await client.create(
       'walletcore',
       'abc123456789',
+      registry,
       'lend lock kit kiss walnut flower expect text upset nut arrive hub waste stairs climb neither must crowd harvest network wife lizard shiver obtain',
     )
+    let aguaclaraTxClient = await txClient(ancon.signer, {
+      addr: ancon.rpcUrl
+    })
 
     const address = 'ethm1x73r96c85nage2y05cpqlzth8ak2qg9p0vqc4d'
     let cid
@@ -52,33 +62,23 @@ export class Sample {
     })
 
     let msgSendMeta = MsgSendMetadataOwnership.fromPartial({
-      Creator: 'ethm1x23pcxakulpq74r7jv948kk90apv6f0k7s943z',
-      PortId: 'cross-metadata-ownership',
-      ChannelId: 'channel-0',
-      Data: {
-        Creator: 'ethm1x23pcxakulpq74r7jv948kk90apv6f0k7s943z',
-        TokenAddress: '0xFA24605D4023b0bf847034Da72D25e1b8daC0E34',
-        TokenId: '3',
-        DidRecipient: 'ethm1x23pcxakulpq74r7jv948kk90apv6f0k7s943z',
-        ToMetadata: 'ethm1x23pcxakulpq74r7jv948kk90apv6f0k7s943z',
+      creator: 'ethm1x73r96c85nage2y05cpqlzth8ak2qg9p0vqc4d',
+      portId: 'aguaclara',
+      channelId: 'channel-0',
+      data: {
+        creator: 'ethm1x73r96c85nage2y05cpqlzth8ak2qg9p0vqc4d',
+        tokenAddress: '0xFA24605D4023b0bf847034Da72D25e1b8daC0E34',
+        tokenId: '3',
+        didRecipient: 'ethm1x73r96c85nage2y05cpqlzth8ak2qg9p0vqc4d',
+        toMetadata: 'ethm1x73r96c85nage2y05cpqlzth8ak2qg9p0vqc4d',
       },
     })
 
     // // Subscribe to Tendermint events
-    let query = `message.action='Metadata'`
+    let query = `message.action='SendMetadataOwnership'`
     ancon.tm.subscribeTx(query).addListener({
       next: async (log: TxEvent) => {
-        // Decode response
-        const res = MsgMetadataResponse.decode(log.result.data)
-        console.log(res)
-        // Hack: Protobuf issue
-        cid = res.cid.split(';')[1]
-        console.log(cid)
-
-        // Get CID content from GET /ancon/{cid} or /ancon/{cid}/{path}
-        const content = await ancon.queryClient.queryReadWithPath(cid, '/', {})
-
-        console.log(content.data)
+        console.log(log)
       },
     })
 
@@ -127,41 +127,40 @@ export class Sample {
     const msgMetadataReceipt = await ancon.signAndBroadcast(
       chainId,
       evmChainId,
-      'msgMetadata',
-      msg,
       fee,
       '0x37A232EB07A4FA8CA88FA6020F89773F6CA020A1',
+      aguaclaraTxClient.msgSendMetadataOwnership(msgSendMeta),
     )
 
     console.log(msgMetadataReceipt)
     // ancon.getTxProof(msgMetadataReceipt.txhash)
-    setTimeout(async () => {
-      let resp = await fetch(
-        `http://localhost:26657/tx?hash=0x${msgMetadataReceipt.txhash}&prove=true`,
-      )
-      const o = await resp.json()
-      console.log(o, msgMetadataReceipt)
+    // setTimeout(async () => {
+    //   let resp = await fetch(
+    //     `http://localhost:26657/tx?hash=0x${msgMetadataReceipt.txhash}&prove=true`,
+    //   )
+    //   const o = await resp.json()
+    //   console.log(o, msgMetadataReceipt)
 
-      const msgupd = MsgUpdateMetadataOwnership.fromPartial({
-        hash: cid,
-        previousOwner: 'did:key:z8mWaJHXieAVxxLagBpdaNWFEBKVWmMiE',
-        newOwner: 'did:ethr:0xeeC58E89996496640c8b5898A7e0218E9b6E90cB',
-        currentChainId: '9000',
-        recipientChainId: '3',
-        sender: address,
-      })
+    //   const msgupd = MsgUpdateMetadataOwnership.fromPartial({
+    //     hash: cid,
+    //     previousOwner: 'did:key:z8mWaJHXieAVxxLagBpdaNWFEBKVWmMiE',
+    //     newOwner: 'did:ethr:0xeeC58E89996496640c8b5898A7e0218E9b6E90cB',
+    //     currentChainId: '9000',
+    //     recipientChainId: '3',
+    //     sender: address,
+    //   })
 
-      // Change Metadata Message request
-      // Add Cosmos uatom
-      const msgUpdateMetadataReceipt = await ancon.signAndBroadcast(
-        chainId,
-        evmChainId,
-        'msgUpdateMetadataOwnership',
-        msgupd,
-        fee,
-        '0x37A232EB07A4FA8CA88FA6020F89773F6CA020A1',
-      )
-    }, 5000)
+    //   // Change Metadata Message request
+    //   // Add Cosmos uatom
+    //   const msgUpdateMetadataReceipt = await ancon.signAndBroadcast(
+    //     chainId,
+    //     evmChainId,
+    //     'msgUpdateMetadataOwnership',
+    //     msgupd,
+    //     fee,
+    //     '0x37A232EB07A4FA8CA88FA6020F89773F6CA020A1',
+    //   )
+    // }, 5000)
   }
 }
 
